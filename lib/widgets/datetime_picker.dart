@@ -8,16 +8,18 @@ class DatetimePickerWidget extends StatefulWidget {
   const DatetimePickerWidget({Key key, this.date}) : super(key: key);
 
   @override
-  _DatetimePickerWidgetState createState() => _DatetimePickerWidgetState();
+  _DatetimePickerWidgetState createState() => _DatetimePickerWidgetState(dateTime: this.date);
 }
 
 class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
   DateTime dateTime;
+
+  _DatetimePickerWidgetState({this.dateTime});
   String getText() {
-    if (widget.date == null) {
+    if (dateTime == null) {
       return 'Select Date Expired';
     } else {
-      return 'Date Expired: ' + DateFormat('MM/dd/yyyy HH:mm').format(widget.date);
+      return 'Date Expired: ' + DateFormat('MM/dd/yyyy HH:mm').format(dateTime);
     }
   }
 
@@ -26,12 +28,12 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     return ButtonHeaderWidget(
       title: 'Date Expired',
       text: getText(),
-      onClicked: () => pickDateTime(context,widget.date),
+      onClicked: () => pickDateTime(context),
     );
   }
 
 
-  Future pickDateTime(BuildContext context,DateTime dateExpired) async {
+  Future pickDateTime(BuildContext context) async {
     final date = await pickDate(context);
     if (date == null) return;
 
@@ -39,7 +41,7 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     if (time == null) return;
 
     setState(() {
-      dateExpired = DateTime(
+      dateTime = DateTime(
         date.year,
         date.month,
         date.day,
@@ -47,8 +49,8 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
         time.minute,
       );
       //add update time to db
-
     });
+
   }
 
   Future<DateTime> pickDate(BuildContext context) async {

@@ -10,7 +10,7 @@ class DatabaseHelper {
     return openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (db, version) async {
-        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT ,dateExpired TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)");
+        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT");
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, title TEXT, isDone INTEGER)");
 
         return db;
@@ -72,6 +72,11 @@ class DatabaseHelper {
     Database _db = await database();
     await _db.rawDelete("DELETE FROM tasks WHERE id = '$id'");
     await _db.rawDelete("DELETE FROM todo WHERE taskId = '$id'");
+  }
+
+  Future<void> deleteTodo(int id) async {
+    Database _db = await database();
+    await _db.rawDelete("DELETE FROM todo WHERE id = '$id'");
   }
 
 }
