@@ -1,24 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:guideme/utils/database_helper.dart';
 
 class TaskCardWidget extends StatelessWidget {
+  DatabaseHelper _dbHelper = DatabaseHelper();
   final String title;
   final String desc;
+  final int taskId;
+  bool isRemove = false;
 
-  TaskCardWidget({this.title, this.desc});
+  TaskCardWidget({this.title, this.desc, this.taskId});
+
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Slidable(
+    actionPane: SlidableScrollActionPane(),
+    actionExtentRatio: 0.25,
+    actions: <Widget>[
+      new IconSlideAction(
+        caption: 'Share',
+        color: Colors.indigo[400],
+        icon: Icons.share,
+        onTap: () => print('Share'), //call action
+      ),
+    ],
+    child: Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         vertical: 32.0,
         horizontal: 24.0,
       ),
       margin: EdgeInsets.only(
-        bottom: 20.0,
+        bottom: 5.0,
+        top: 5.0,
       ),
       decoration: BoxDecoration(
-        color: Color(0xFF6AE0D9).withOpacity(0.3),
+        color: Color(0xFFEEEDFF),
         borderRadius: BorderRadius.circular(20.0),
       ),
       child: Column(
@@ -27,7 +45,7 @@ class TaskCardWidget extends StatelessWidget {
           Text(
             title ?? "(Unnamed Task)",
             style: TextStyle(
-              color: Color(0xFF211551),
+              
               fontSize: 22.0,
               fontWeight: FontWeight.bold,
             ),
@@ -47,6 +65,7 @@ class TaskCardWidget extends StatelessWidget {
           )
         ],
       ),
+    ),
     );
   }
 }

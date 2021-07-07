@@ -76,6 +76,7 @@ class _HomepageState extends State<Homepage> {
                                 child: TaskCardWidget(
                                   title: snapshot.data[index].title,
                                   desc: snapshot.data[index].description,
+                                  taskId: snapshot.data[index].id,
                                 ),
                               );
                             },
