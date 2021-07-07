@@ -10,7 +10,7 @@ class DatabaseHelper {
     return openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (db, version) async {
-        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT)");
+        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT");
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, title TEXT, isDone INTEGER)");
 
         return db;
@@ -31,6 +31,10 @@ class DatabaseHelper {
   Future<void> updateTaskTitle(int id, String title) async {
     Database _db = await database();
     await _db.rawUpdate("UPDATE tasks SET title = '$title' WHERE id = '$id'");
+  }
+  Future<void> updateTaskExpiredDate(int id, DateTime date) async {
+    Database _db = await database();
+    await _db.rawUpdate("UPDATE tasks SET dateExpired = '$date' WHERE id = '$id'");
   }
 
   Future<void> updateTaskDescription(int id, String description) async {
@@ -68,6 +72,11 @@ class DatabaseHelper {
     Database _db = await database();
     await _db.rawDelete("DELETE FROM tasks WHERE id = '$id'");
     await _db.rawDelete("DELETE FROM todo WHERE taskId = '$id'");
+  }
+
+  Future<void> deleteTodo(int id) async {
+    Database _db = await database();
+    await _db.rawDelete("DELETE FROM todo WHERE id = '$id'");
   }
 
 }

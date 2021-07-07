@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/models/task.dart';
 import 'package:guideme/models/todo.dart';
+import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/to_do.dart';
+import 'package:guideme/widgets/datetime_picker.dart';
 
 class Taskpage extends StatefulWidget {
   final Task task;
@@ -19,9 +21,11 @@ class _TaskpageState extends State<Taskpage> {
   int _taskId = 0;
   String _taskTitle = "";
   String _taskDescription = "";
+  DateTime _dateExpired;
 
   FocusNode _titleFocus;
   FocusNode _descriptionFocus;
+  FocusNode _dateExpiredFocus;
   FocusNode _todoFocus;
 
   bool _contentVisile = false;
@@ -35,11 +39,14 @@ class _TaskpageState extends State<Taskpage> {
       _taskTitle = widget.task.title;
       _taskDescription = widget.task.description;
       _taskId = widget.task.id;
+      _dateExpired = DateTime.now();
+      //_dateExpired = widget.task.dateExpired; update when change db local
     }
 
     _titleFocus = FocusNode();
     _descriptionFocus = FocusNode();
     _todoFocus = FocusNode();
+    _dateExpiredFocus = FocusNode();
 
     super.initState();
   }
@@ -137,7 +144,7 @@ class _TaskpageState extends State<Taskpage> {
                               _taskDescription = value;
                             }
                           }
-                          _todoFocus.requestFocus();
+                          _dateExpiredFocus.requestFocus();
                         },
                         controller: TextEditingController()
                           ..text = _taskDescription,
@@ -153,6 +160,15 @@ class _TaskpageState extends State<Taskpage> {
                   ),
                   Visibility(
                     visible: _contentVisile,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 12.0,
+                      ),
+                      child: DatetimePickerWidget(date:_dateExpired), //fix pass
+                    ),
+                  ),
+                  Visibility(
+                    visible: _contentVisile,
                     child: FutureBuilder(
                       initialData: [],
                       future: _dbHelper.getTodo(_taskId),
@@ -161,23 +177,46 @@ class _TaskpageState extends State<Taskpage> {
                           child: ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  if (snapshot.data[index].isDone == 0) {
-                                    await _dbHelper.updateTodoDone(
-                                        snapshot.data[index].id, 1);
-                                  } else {
-                                    await _dbHelper.updateTodoDone(
-                                        snapshot.data[index].id, 0);
-                                  }
-                                  setState(() {});
-                                },
-                                child: TodoWidget(
-                                  text: snapshot.data[index].title,
-                                  isDone: snapshot.data[index].isDone == 0
-                                      ? false
-                                      : true,
-                                ),
+                              return Dismissible(
+                                  direction: DismissDirection.endToStart,
+                                  key: Key(UniqueKey().toString()),
+                                  background: Container(
+                                    alignment: AlignmentDirectional.centerEnd,
+                                    color: Colors.red,
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                                      child: Icon(Icons.delete,
+                                        color: Colors.white,
+
+                                      ),
+
+
+                                    ),
+                                  ),
+                                  onDismissed: (direction) {
+                                    _dbHelper.deleteTodo(snapshot.data[index].id);
+                                    setState(() {
+                                    });
+                                    Utils.showSnackBar(context, 'Deleted the todo');
+                                  },
+                                  child: GestureDetector(
+                                  onTap: () async {
+                                    if (snapshot.data[index].isDone == 0) {
+                                      await _dbHelper.updateTodoDone(
+                                          snapshot.data[index].id, 1);
+                                    } else {
+                                      await _dbHelper.updateTodoDone(
+                                          snapshot.data[index].id, 0);
+                                    }
+                                    setState(() {});
+                                  },
+                                  child: TodoWidget(
+                                    text: snapshot.data[index].title,
+                                    isDone: snapshot.data[index].isDone == 0
+                                        ? false
+                                        : true,
+                                  ),
+                                )
                               );
                             },
                           ),

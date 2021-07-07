@@ -11,6 +11,9 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   DatabaseHelper _dbHelper = DatabaseHelper();
+  VoidCallback myVoidCallback () {setState(() {
+  });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +79,8 @@ class _HomepageState extends State<Homepage> {
                                 child: TaskCardWidget(
                                   title: snapshot.data[index].title,
                                   desc: snapshot.data[index].description,
+                                  taskId: snapshot.data[index].id,
+                                  myVoidCallback: myVoidCallback
                                 ),
                               );
                             },
