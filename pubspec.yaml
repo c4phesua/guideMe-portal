@@ -29,7 +29,11 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
   google_fonts: ^1.1.0
+  fluttertoast: ^3.1.0
   flutter_slidable: ^0.6.0
+  provider: ^4.3.2+2
+  # format date time
+  intl: ^0.16.1
 
   sqflite:
   path:

@@ -3,6 +3,7 @@ import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/models/task.dart';
 import 'package:guideme/models/todo.dart';
 import 'package:guideme/widgets/to_do.dart';
+import 'package:guideme/widgets/datetime_picker.dart';
 
 class Taskpage extends StatefulWidget {
   final Task task;
@@ -19,9 +20,11 @@ class _TaskpageState extends State<Taskpage> {
   int _taskId = 0;
   String _taskTitle = "";
   String _taskDescription = "";
+  DateTime _dateExpired = DateTime.now();
 
   FocusNode _titleFocus;
   FocusNode _descriptionFocus;
+  FocusNode _dateExpiredFocus;
   FocusNode _todoFocus;
 
   bool _contentVisile = false;
@@ -40,6 +43,7 @@ class _TaskpageState extends State<Taskpage> {
     _titleFocus = FocusNode();
     _descriptionFocus = FocusNode();
     _todoFocus = FocusNode();
+    _dateExpiredFocus = FocusNode();
 
     super.initState();
   }
@@ -137,7 +141,7 @@ class _TaskpageState extends State<Taskpage> {
                               _taskDescription = value;
                             }
                           }
-                          _todoFocus.requestFocus();
+                          _dateExpiredFocus.requestFocus();
                         },
                         controller: TextEditingController()
                           ..text = _taskDescription,
@@ -149,6 +153,15 @@ class _TaskpageState extends State<Taskpage> {
                           ),
                         ),
                       ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: _contentVisile,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        bottom: 12.0,
+                      ),
+                      child: DatetimePickerWidget(date:_dateExpired),
                     ),
                   ),
                   Visibility(
