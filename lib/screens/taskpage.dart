@@ -39,8 +39,7 @@ class _TaskpageState extends State<Taskpage> {
       _taskTitle = widget.task.title;
       _taskDescription = widget.task.description;
       _taskId = widget.task.id;
-      _dateExpired = DateTime.now();
-      //_dateExpired = widget.task.dateExpired; update when change db local
+      _dateExpired = DateTime.parse(widget.task.dateExpired);
     }
 
     _titleFocus = FocusNode();
@@ -164,7 +163,7 @@ class _TaskpageState extends State<Taskpage> {
                       padding: EdgeInsets.only(
                         bottom: 12.0,
                       ),
-                      child: DatetimePickerWidget(date:_dateExpired), //fix pass
+                      child: DatetimePickerWidget(taskId: _taskId ,date:_dateExpired), //fix pass
                     ),
                   ),
                   Visibility(
