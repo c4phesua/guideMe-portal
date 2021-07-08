@@ -10,12 +10,15 @@ class DatabaseHelper {
     return openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (db, version) async {
-        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT");
+        await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT)");
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, title TEXT, isDone INTEGER)");
 
         return db;
       },
-      version: 1,
+      onUpgrade: (db, oldVersion, version) async {
+        await db.execute("ALTER TABLE tasks ADD COLUMN dateExpired TEXT");
+      },
+      version: 2,
     );
   }
 
@@ -34,7 +37,8 @@ class DatabaseHelper {
   }
   Future<void> updateTaskExpiredDate(int id, DateTime date) async {
     Database _db = await database();
-    await _db.rawUpdate("UPDATE tasks SET dateExpired = '$date' WHERE id = '$id'");
+    String value = date.toString();
+    await _db.rawUpdate("UPDATE tasks SET dateExpired = '$value' WHERE id = '$id'");
   }
 
   Future<void> updateTaskDescription(int id, String description) async {
@@ -51,7 +55,13 @@ class DatabaseHelper {
     Database _db = await database();
     List<Map<String, dynamic>> taskMap = await _db.query('tasks');
     return List.generate(taskMap.length, (index) {
-      return Task(id: taskMap[index]['id'], title: taskMap[index]['title'], description: taskMap[index]['description']);
+      return Task(
+          id: taskMap[index]['id'],
+          title: taskMap[index]['title'],
+          description: taskMap[index]['description'],
+          dateExpired: taskMap[index]['dateExpired']
+        );
+
     });
   }
 

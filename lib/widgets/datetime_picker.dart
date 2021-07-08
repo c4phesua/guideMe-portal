@@ -1,3 +1,4 @@
+import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/widgets/button_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +6,9 @@ import 'package:intl/intl.dart';
 class DatetimePickerWidget extends StatefulWidget {
   final DateTime date;
 
-  const DatetimePickerWidget({Key key, this.date}) : super(key: key);
+  final int taskId;
+
+  const DatetimePickerWidget({Key key, this.taskId, this.date}) : super(key: key);
 
   @override
   _DatetimePickerWidgetState createState() => _DatetimePickerWidgetState(dateTime: this.date);
@@ -15,6 +18,9 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
   DateTime dateTime;
 
   _DatetimePickerWidgetState({this.dateTime});
+
+  int get taskId => this.widget.taskId;
+
   String getText() {
     if (dateTime == null) {
       return 'Select Date Expired';
@@ -34,6 +40,9 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
 
 
   Future pickDateTime(BuildContext context) async {
+
+    DatabaseHelper _dbHelper = DatabaseHelper();
+
     final date = await pickDate(context);
     if (date == null) return;
 
@@ -50,7 +59,8 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
       );
       //add update time to db
     });
-
+    int id = this.taskId;
+    await _dbHelper.updateTaskExpiredDate(id, dateTime);
   }
 
   Future<DateTime> pickDate(BuildContext context) async {
