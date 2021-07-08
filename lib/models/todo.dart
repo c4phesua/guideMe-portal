@@ -3,7 +3,9 @@ class Todo {
   final int taskId;
   final String title;
   final int isDone;
-  Todo({this.id, this.taskId, this.title, this.isDone});
+  final int status;
+  final int idServer;
+  Todo({this.id, this.taskId, this.title, this.isDone, this.status, this.idServer});
 
   Map<String, dynamic> toMap() {
     return {
@@ -11,6 +13,8 @@ class Todo {
       'taskId': taskId,
       'title': title,
       'isDone': isDone,
+      'status':status == null?1:status,
+      'idServer':idServer,
     };
   }
 }
