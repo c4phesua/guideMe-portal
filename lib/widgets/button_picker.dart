@@ -42,7 +42,7 @@ class ButtonWidget extends StatelessWidget {
     child: FittedBox(
       child: Text(
         text,
-        style: TextStyle(fontSize: 14, color: Colors.black),
+        style: TextStyle(fontSize: 16, color: Colors.black),
       ),
     ),
     onPressed: onClicked,

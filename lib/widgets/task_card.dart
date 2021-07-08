@@ -21,7 +21,7 @@ class TaskCardWidget extends StatelessWidget {
     actions:[
       IconSlideAction(
         color: Colors.indigoAccent,
-        caption: '',
+        caption: 'Share',
         onTap: () => shareTodo(context,taskId),
         icon: Icons.share
       )
@@ -49,31 +49,44 @@ class TaskCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child:
+            Row(
               children: [
-                Text(
-                  title ?? "(Unnamed Task)",
-                  style: TextStyle(
-                    color: Color(0xFF211551),
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 10.0,
-                  ),
-                  child: Text(
-                    desc ?? "No Description Added",
+                Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title ?? "(Unnamed Task)",
                     style: TextStyle(
-                      fontSize: 16.0,
-                      color: Color(0xFF86829D),
-                      height: 1.5,
+                      color: Color(0xFF211551),
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 10.0,
+                    ),
+                    child: Text(
+                      desc ?? "No Description Added",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color(0xFF86829D),
+                        height: 1.5,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+                // Text(
+                //   "No Description Added",
+                //   style: TextStyle(
+                //     fontSize: 12.0,
+                //     color: Color(0xFF86829D),
+                //     height: 1.5,
+                //   ),
+                // ),
+            ]
             ),
           ),
     )
