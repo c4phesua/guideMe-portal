@@ -3,6 +3,7 @@ import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/screens/taskpage.dart';
 import 'package:guideme/widgets/task_card.dart';
 import 'package:guideme/widgets/no_glow_behaviour.dart';
+import 'package:search_widget/search_widget.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -11,8 +12,8 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   DatabaseHelper _dbHelper = DatabaseHelper();
-  VoidCallback myVoidCallback () {setState(() {
-  });
+  VoidCallback myVoidCallback() {
+    setState(() {});
   }
 
   @override
@@ -28,29 +29,26 @@ class _HomepageState extends State<Homepage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Container(
-                    margin: EdgeInsets.only(
-                      top: 32.0,
-                      bottom: 32.0,
-                    ),
-                    child:  Stack(
-                      children: <Widget>[
-                        Image(
-                          image: AssetImage('assets/images/icon2.png'),
-
-                        ),
-                        Text(
-                          "My Todo list",
-                          style: TextStyle(
-                            color: Color(0xFF211551),
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold,
+                      margin: EdgeInsets.only(
+                        top: 32.0,
+                        bottom: 32.0,
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          Image(
+                            image: AssetImage('assets/images/icon2.png'),
                           ),
-                        ),
-                      ],
-                    )
-                  ),
+                          Text(
+                            "My Todo list",
+                            style: TextStyle(
+                              color: Color(0xFF211551),
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )),
                   Expanded(
                     child: FutureBuilder(
                       initialData: [],
@@ -77,11 +75,11 @@ class _HomepageState extends State<Homepage> {
                                   );
                                 },
                                 child: TaskCardWidget(
-                                  title: snapshot.data[index].title,
-                                  desc: snapshot.data[index].description,
-                                  taskId: snapshot.data[index].id,
-                                  myVoidCallback: myVoidCallback
-                                ),
+                                    title: snapshot.data[index].title,
+                                    desc: snapshot.data[index].description,
+                                    taskId: snapshot.data[index].id,
+                                    date: snapshot.data[index].dateExpired,
+                                    myVoidCallback: myVoidCallback),
                               );
                             },
                           ),
@@ -128,6 +126,7 @@ class _HomepageState extends State<Homepage> {
           ),
         ),
       ),
+
     );
   }
 }

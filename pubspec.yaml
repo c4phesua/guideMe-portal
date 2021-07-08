@@ -34,6 +34,7 @@ dependencies:
   provider: ^4.3.2+2
   # format date time
   intl: ^0.16.1
+  search_widget: ^1.0.2
 
   sqflite:
   path:

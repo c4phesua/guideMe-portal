@@ -1,16 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/utils/utils.dart';
+import 'package:intl/intl.dart';
 
 class TaskCardWidget extends StatelessWidget {
   DatabaseHelper _dbHelper = DatabaseHelper();
   final String title;
   final String desc;
   final int taskId;
+  final String date;
   final VoidCallback myVoidCallback;
 
-  TaskCardWidget({this.title, this.desc, this.taskId,this.myVoidCallback});
+  TaskCardWidget({this.title, this.desc, this.taskId, this.date,this.myVoidCallback});
 
 
   @override
@@ -21,7 +24,7 @@ class TaskCardWidget extends StatelessWidget {
     actions:[
       IconSlideAction(
         color: Colors.indigoAccent,
-        caption: '',
+        caption: 'Share',
         onTap: () => shareTodo(context,taskId),
         icon: Icons.share
       )
@@ -49,31 +52,70 @@ class TaskCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.0),
       ),
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child:
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title ?? "(Unnamed Task)",
-                  style: TextStyle(
-                    color: Color(0xFF211551),
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 10.0,
-                  ),
-                  child: Text(
-                    desc ?? "No Description Added",
+                Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title ?? "(Unnamed Task)",
                     style: TextStyle(
-                      fontSize: 16.0,
-                      color: Color(0xFF86829D),
-                      height: 1.5,
+                      color: Color(0xFF211551),
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 10.0,
+                    ),
+                    child: Container(
+                      width: 200,
+                      child: RichText(
+                      text:TextSpan(
+                      text: desc ??"No Description Added",
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Color(0xFF86829D),
+                        height: 1.5,
+                      ),
+                    )
+                    ),
+                    ),
+                  )
+                ],
+              ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        Icon(Icons.timelapse),
+                        Text(
+                          DateFormat('MM/dd/yyyy').format(DateTime.parse(this.date)),
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Color(0xFF211551),
+                            height: 1.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          DateFormat('HH:mm').format(DateTime.parse(this.date)),
+                          style: TextStyle(
+                            fontSize: 12.0,
+                            color: Color(0xFF211551),
+                            height: 1.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                    ],
+
+                  ),
+                ),
+            ]
             ),
           ),
     )
