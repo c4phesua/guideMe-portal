@@ -18,7 +18,7 @@ class DatabaseHelper {
       onUpgrade: (db, oldVersion, version) async {
         await db.execute("ALTER TABLE tasks ADD COLUMN dateExpired TEXT");
       },
-      version: 2,
+      version: 3,
     );
   }
 
@@ -61,6 +61,20 @@ class DatabaseHelper {
           description: taskMap[index]['description'],
           dateExpired: taskMap[index]['dateExpired']
         );
+
+    });
+  }
+
+  Future<List<Task>> getTasksWithKey(String key) async {
+    Database _db = await database();
+    List<Map> taskMap = await _db.rawQuery('Select id,title,description,dateExpired from tasks where title like ?',["%"+key+"%"]);
+    return List.generate(taskMap.length, (index) {
+      return Task(
+          id: taskMap[index]['id'],
+          title: taskMap[index]['title'],
+          description: taskMap[index]['description'],
+          dateExpired: taskMap[index]['dateExpired']
+      );
 
     });
   }
