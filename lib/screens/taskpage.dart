@@ -18,10 +18,11 @@ class Taskpage extends StatefulWidget {
 class _TaskpageState extends State<Taskpage> {
   DatabaseHelper _dbHelper = DatabaseHelper();
 
+
   int _taskId = 0;
   String _taskTitle = "";
   String _taskDescription = "";
-  DateTime _dateExpired;
+  DateTime _dateExpired = DateTime.now().add(Duration(days: 15));
 
   FocusNode _titleFocus;
   FocusNode _descriptionFocus;
@@ -39,7 +40,8 @@ class _TaskpageState extends State<Taskpage> {
       _taskTitle = widget.task.title;
       _taskDescription = widget.task.description;
       _taskId = widget.task.id;
-      _dateExpired = DateTime.parse(widget.task.dateExpired);
+      print(widget.task.dateExpired);
+      _dateExpired = widget.task.dateExpired==null?_dateExpired:DateTime.parse(widget.task.dateExpired);
     }
 
     _titleFocus = FocusNode();

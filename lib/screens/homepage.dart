@@ -78,6 +78,7 @@ class _HomepageState extends State<Homepage> {
                                     title: snapshot.data[index].title,
                                     desc: snapshot.data[index].description,
                                     taskId: snapshot.data[index].id,
+                                    date: snapshot.data[index].dateExpired,
                                     myVoidCallback: myVoidCallback),
                               );
                             },
