@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guideme/screens/Searchpage.dart';
 import 'package:guideme/screens/homepage.dart';
 import 'package:guideme/screens/taskpage.dart';
 
@@ -11,7 +12,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int pageIndex = 1;
   List<Widget> pageList = <Widget>[
-    Homepage(),
+    SearchPage(),
     Homepage(),
     Homepage()
   ];

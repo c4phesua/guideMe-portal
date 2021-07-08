@@ -36,8 +36,15 @@ class _HomepageState extends State<Homepage> {
                       ),
                       child: Stack(
                         children: <Widget>[
-                          Image(
-                            image: AssetImage('assets/images/icon2.png'),
+                          Row(
+
+                            children: [
+                              Image(
+                                image: AssetImage('assets/images/icon2.png'),
+                                height: 200,
+                              )
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
                           ),
                           Text(
                             "My Todo list",
@@ -48,7 +55,8 @@ class _HomepageState extends State<Homepage> {
                             ),
                           ),
                         ],
-                      )),
+                      )
+                  ),
                   Expanded(
                     child: FutureBuilder(
                       initialData: [],
