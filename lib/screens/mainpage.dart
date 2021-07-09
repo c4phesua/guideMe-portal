@@ -18,7 +18,6 @@ class _MainScreenState extends State<MainScreen> {
     SearchPage(),
     Homepage(),
     ProfilePage(),
-    LoginPage()
   ];
   bool isLogin;
   @override
@@ -32,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: (!isLogin && pageIndex == 2)?pageList[pageIndex+1]:pageList[pageIndex],
+      body: pageList[pageIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: pageIndex,

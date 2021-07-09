@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:guideme/controllers/user_preferences.dart';
+import 'package:guideme/screens/profilepage.dart';
+import 'package:guideme/screens/signuppage.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
@@ -20,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   String _password = "";
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
+  bool isLogin;
 
   bool showPassword = false;
   @override
@@ -27,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
-    _emailFocus.requestFocus();
+    isLogin = UserPrederences.isLogin()??false;
     super.initState();
   }
   @override
@@ -41,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return isLogin?ProfilePage():Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -168,24 +172,50 @@ class _LoginPageState extends State<LoginPage> {
               ),
               RounderButtonWidget(
                 text: "LOGIN",
-                press: (){
-                  login();
-                },
+                press:() => login(),
               ),
-              RounderButtonWidget(
-                text: "SIGNUP",
-                color: Colors.deepPurpleAccent[100],
-                textColor: Colors.black,
-                press: (){},
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Don't have an Account ? ",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignupPage()
+                        ),
+                      ).then(
+                            (value) {
+                          setState(() {});
+                        },
+                      );
+                    },
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
+                  )
+                ],
+              )
             ],
           ),
         ),
       ),
     );
   }
-  bool login(){
+  void login()  async {
     print("login with email " + _email +" and pass " + _password);
-    return true;
+
+    await UserPrederences.setIsLogin(true);
+    isLogin = await UserPrederences.isLogin()??false;
+    setState(() {
+    });
   }
 }

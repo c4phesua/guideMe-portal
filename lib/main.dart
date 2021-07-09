@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:guideme/controllers/user_preferences.dart';
 import 'package:guideme/screens/homepage.dart';
 import 'package:guideme/screens/mainpage.dart';
+import 'package:guideme/screens/signuppage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: MainScreen(),
+      home: SignupPage(),
     );
   }
 }

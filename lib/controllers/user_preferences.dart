@@ -11,13 +11,13 @@ class UserPrederences {
   }
 
 
-  Future setToken(String token) async {
+  static Future setToken(String token) async {
     await _preferences.setString(_keyToken, token);
   }
 
   static String getToken() => _preferences.getString(_keyToken);
 
-  Future setIsLogin(bool isLogin) async => await _preferences.setBool(_keyIsLogic, isLogin);
+  static Future setIsLogin(bool isLogin) async => await _preferences.setBool(_keyIsLogic, isLogin);
 
   static bool isLogin() => _preferences.getBool(_keyIsLogic);
 }
