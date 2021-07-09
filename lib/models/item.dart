@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:guideme/models/todo.dart';
 
 class Item {
@@ -14,6 +16,7 @@ class Item {
       'title': title,
       'description': description,
       'dateExpired': dateExpired,
+      'todos': jsonEncode(this.todos)
     };
   }
 }

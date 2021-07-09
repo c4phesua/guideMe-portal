@@ -40,8 +40,8 @@ class _TaskpageState extends State<Taskpage> {
       _taskTitle = widget.task.title;
       _taskDescription = widget.task.description;
       _taskId = widget.task.id;
-      print(widget.task.dateExpired);
       _dateExpired = widget.task.dateExpired==null?_dateExpired:DateTime.parse(widget.task.dateExpired);
+
     }
 
     _titleFocus = FocusNode();
@@ -97,7 +97,7 @@ class _TaskpageState extends State<Taskpage> {
                               if (value != "") {
                                 // Check if the task is null
                                 if (widget.task == null) {
-                                  Task _newTask = Task(title: value);
+                                  Task _newTask = Task(title: value, dateExpired: _dateExpired.toString());
                                   _taskId =
                                       await _dbHelper.insertTask(_newTask);
                                   setState(() {

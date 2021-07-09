@@ -3,7 +3,9 @@ class Task {
   final String title;
   final String description;
   final String dateExpired;
-  Task({this.id, this.title, this.description, this.dateExpired});
+  final int status;
+  final int idServer;
+  Task({this.id, this.title, this.description, this.dateExpired, this.status, this.idServer});
 
   Map<String, dynamic> toMap() {
     return {
@@ -11,6 +13,8 @@ class Task {
       'title': title,
       'description': description,
       'dateExpired': dateExpired,
+      'status':status == null?1:status,
+      'idServer':idServer,
     };
   }
 }
