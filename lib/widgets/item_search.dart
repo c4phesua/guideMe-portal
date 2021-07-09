@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:guideme/models/task.dart';
+import 'package:guideme/models/todo.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +22,7 @@ class ItemCardWidget extends StatelessWidget {
         actionPane: SlidableDrawerActionPane(),
         secondaryActions: [
           IconSlideAction(
-            color: Colors.orange,
+            color: Colors.lightBlue[100],
             caption: 'Download',
             onTap: () => downloadTodo(context,this.task),
             icon: Icons.download,
@@ -105,9 +106,10 @@ class ItemCardWidget extends StatelessWidget {
 
   void downloadTodo(BuildContext context,Task task) {
     // this._dbHelper.insertTask(Task(title:task.title,description: ));
+    //call api and save to database
     this.myVoidCallback();
 
-    Utils.showSnackBar(context, 'Downloaded the task');
+    Utils.showSnackBar(context, 'Download the task');
   }
 
   void shareTodo(BuildContext context,int id ){

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:guideme/models/task.dart';
+import 'package:guideme/screens/viewtaskpage.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/widgets/item_search.dart';
 import 'package:guideme/widgets/no_glow_behaviour.dart';
@@ -111,12 +112,28 @@ class _SearchPageState extends State<SearchPage> {
                               child: ListView.builder(
                                 itemCount: snapshot.data.length,
                                 itemBuilder: (context, index) {
-                                  return ItemCardWidget(
-                                      task:Task(id:snapshot.data[index].id,
-                                          title:snapshot.data[index].title,
-                                          description:snapshot.data[index].description,
-                                          dateExpired:snapshot.data[index].dateExpired),
-                                      myVoidCallback: myVoidCallback);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ViewTaskpage(
+                                            task: snapshot.data[index],
+                                          ),
+                                        ),
+                                      ).then(
+                                            (value) {
+                                          setState(() {});
+                                        },
+                                      );
+                                    },
+                                    child: ItemCardWidget(
+                                        task:Task(id:snapshot.data[index].id,
+                                            title:snapshot.data[index].title,
+                                            description:snapshot.data[index].description,
+                                            dateExpired:snapshot.data[index].dateExpired),
+                                        myVoidCallback: myVoidCallback),
+                                  );
                                 },
                               ),
                             );
