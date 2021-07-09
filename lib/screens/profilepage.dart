@@ -13,7 +13,8 @@ class ProfilePage extends StatelessWidget {
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(
-                            "add you image URL here "
+                            // "add you image URL here "
+                            "https://lh3.googleusercontent.com/a-/AOh14GiEGV9-O6Dbbo0czlE7ua8Yg_8f7gY0vmauioRc=s320-p-k-no-mo"
                         ),
                         fit: BoxFit.cover
                     )
@@ -25,7 +26,8 @@ class ProfilePage extends StatelessWidget {
                     alignment: Alignment(0.0,2.5),
                     child: CircleAvatar(
                       backgroundImage: NetworkImage(
-                          "Add you profile DP image URL here "
+                          // "Add you profile DP image URL here "
+                          "https://lh3.googleusercontent.com/a-/AOh14GiEGV9-O6Dbbo0czlE7ua8Yg_8f7gY0vmauioRc=s320-p-k-no-mo"
                       ),
                       radius: 60.0,
                     ),
@@ -37,7 +39,7 @@ class ProfilePage extends StatelessWidget {
                 height: 60,
               ),
               Text(
-                "Rajat Palankar"
+                "Fullname"
                 ,style: TextStyle(
                   fontSize: 25.0,
                   color:Colors.blueGrey,
@@ -49,7 +51,7 @@ class ProfilePage extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "Belgaum, India"
+                "email"
                 ,style: TextStyle(
                   fontSize: 18.0,
                   color:Colors.black45,
@@ -59,6 +61,34 @@ class ProfilePage extends StatelessWidget {
               ),
               SizedBox(
                 height: 10,
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor:Colors.blueGrey,
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: null,
+                child: const Text(
+                  'Sync data',
+                  style: TextStyle(
+                      color:Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor:Colors.red,
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: null,
+                child: const Text(
+                    'Logout',
+                  style: TextStyle(
+                    color:Colors.white,
+                  ),),
               ),
             ],
           ),
