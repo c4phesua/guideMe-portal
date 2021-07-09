@@ -14,7 +14,7 @@ class Todo {
       'title': title,
       'isDone': isDone,
       'status':status == null?1:status,
-      'idServer':idServer,
+      'idServer':idServer == null?-1:idServer,
     };
   }
 }
