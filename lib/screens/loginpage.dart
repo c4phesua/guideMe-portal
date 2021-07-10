@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/controllers/user_preferences.dart';
 import 'package:guideme/screens/profilepage.dart';
 import 'package:guideme/screens/signuppage.dart';
 import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
 
@@ -14,18 +18,19 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
-  DatabaseHelper _dbHelper = DatabaseHelper();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   VoidCallback myVoidCallback() {
     setState(() {});
   }
 
-  String _email = "";
-  String _password = "";
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   bool isLogin;
 
   bool showPassword = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -39,6 +44,8 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement dispose
     _emailFocus.dispose();
     _passwordFocus.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -60,28 +67,6 @@ class _LoginPageState extends State<LoginPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Padding(
-                          //   padding: EdgeInsets.only(
-                          //     top: 10.0,
-                          //     bottom: 6.0,
-                          //   ),
-                          //   child: Row(
-                          //       children: [
-                          //         InkWell(
-                          //           onTap: () {
-                          //             Navigator.pop(context);
-                          //           },
-                          //           child: Padding(
-                          //             padding: const EdgeInsets.all(10.0),
-                          //             child: Image(
-                          //               image: AssetImage(
-                          //                   'assets/images/back_arrow_icon.png'),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ]
-                          //   ),
-                          // ),
                           Container(
                             margin: EdgeInsets.only(
                               top: 32.0,
@@ -127,6 +112,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _emailFocus,
+                  controller: emailController,
                   decoration: InputDecoration(
                     icon: Icon(
                       Icons.person,
@@ -136,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                     border: InputBorder.none
                   ),
                   onSubmitted: (value) {
-                    _email = value;
                     if(value != ""){
                       _passwordFocus.requestFocus();
                     }
@@ -146,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _passwordFocus,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     icon: Icon(
                         Icons.lock,
@@ -164,9 +150,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (value) {
-                    _password = value;
-                  },
                   obscureText: !showPassword,
                 ),
               ),
@@ -211,11 +194,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
   void login()  async {
-    print("login with email " + _email +" and pass " + _password);
-
-    await UserPrederences.setIsLogin(true);
+    await ApiHandler.login(emailController.text.trim(), passwordController.text.trim());
     isLogin = await UserPrederences.isLogin()??false;
-    setState(() {
-    });
+    await ApiHandler.getUserInfo();
+    if(isLogin) {
+      setState(() {});
+    }else{
+      Utils.showSnackBar(context, "Login Error");
+    }
   }
 }

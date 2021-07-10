@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:guideme/controllers/user_preferences.dart';
-import 'package:guideme/screens/homepage.dart';
 import 'package:guideme/screens/mainpage.dart';
-import 'package:guideme/screens/signuppage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await UserPrederences.init();
+
   runApp(MyApp());
 }
 
@@ -23,7 +21,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: SignupPage(),
+      home: MainScreen(),
     );
   }
 }
