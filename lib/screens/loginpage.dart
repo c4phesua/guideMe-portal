@@ -1,38 +1,42 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:guideme/controllers/api_handler.dart';
+import 'package:guideme/controllers/user_preferences.dart';
+import 'package:guideme/screens/profilepage.dart';
+import 'package:guideme/screens/signuppage.dart';
 import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
 
-class SignupPage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _LoginPageState extends State<LoginPage> {
 
-  DatabaseHelper _dbHelper = DatabaseHelper();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   VoidCallback myVoidCallback() {
     setState(() {});
   }
 
-  String _email = "";
-  String _password = "";
-  String _name = "";
-  String _rePassword = "";
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
-  FocusNode _nameFocus;
-  FocusNode _rePasswordFocus;
+  bool isLogin;
 
   bool showPassword = false;
+
   @override
   void initState() {
     // TODO: implement initState
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
-    _nameFocus = FocusNode();
-    _rePasswordFocus = FocusNode();
+    isLogin = UserPrederences.isLogin()??false;
     super.initState();
   }
   @override
@@ -40,15 +44,15 @@ class _SignupPageState extends State<SignupPage> {
     // TODO: implement dispose
     _emailFocus.dispose();
     _passwordFocus.dispose();
-    _rePasswordFocus.dispose();
-    _nameFocus.dispose();
+    emailController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
+    return isLogin?ProfilePage():Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -63,7 +67,6 @@ class _SignupPageState extends State<SignupPage> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
                           Container(
                             margin: EdgeInsets.only(
                               top: 32.0,
@@ -84,32 +87,10 @@ class _SignupPageState extends State<SignupPage> {
                                 ),
                                 Column(
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 10.0,
-                                        bottom: 6.0,
-                                      ),
-                                      child: Row(
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(10.0),
-                                                child: Image(
-                                                  image: AssetImage(
-                                                      'assets/images/back_arrow_icon.png'),
-                                                ),
-                                              ),
-                                            ),
-                                          ]
-                                      ),
-                                    ),
                                     Align(
                                       alignment: Alignment.center,
                                       child: Text(
-                                        "Register New Account",
+                                        "Login",
                                         style: TextStyle(
                                           color: Color(0xFF211551),
                                           fontSize: 30.0,
@@ -119,7 +100,6 @@ class _SignupPageState extends State<SignupPage> {
                                     ),
                                   ],
                                 ),
-
                               ],
                             ),
                           ),
@@ -132,35 +112,16 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _emailFocus,
+                  controller: emailController,
                   decoration: InputDecoration(
-                      icon: Icon(
-                          Icons.person,
-                          color: Color(0xFF6F35A5)
-                      ),
-                      hintText: "Your email",
-                      border: InputBorder.none
+                    icon: Icon(
+                      Icons.person,
+                      color: Color(0xFF6F35A5)
+                    ),
+                    hintText: "Your email",
+                    border: InputBorder.none
                   ),
                   onSubmitted: (value) {
-                    _email = value;
-                    if(value != ""){
-                      _nameFocus.requestFocus();
-                    }
-                  },
-                ),
-              ),
-              TextFieldContainerWidget(
-                child: TextField(
-                  focusNode: _nameFocus,
-                  decoration: InputDecoration(
-                      icon: Icon(
-                          Icons.account_box,
-                          color: Color(0xFF6F35A5)
-                      ),
-                      hintText: "Your fullname",
-                      border: InputBorder.none
-                  ),
-                  onSubmitted: (value) {
-                    _name = value;
                     if(value != ""){
                       _passwordFocus.requestFocus();
                     }
@@ -170,6 +131,7 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _passwordFocus,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     icon: Icon(
                         Icons.lock,
@@ -188,55 +150,57 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (value) {
-                    _password = value;
-                    _rePasswordFocus.requestFocus();
-                  },
                   obscureText: !showPassword,
                 ),
               ),
-              TextFieldContainerWidget(
-                child: TextField(
-                  focusNode: _rePasswordFocus,
-                  decoration: InputDecoration(
-                    icon: Icon(
-                        Icons.lock_outline,
-                        color: Color(0xFF6F35A5)
-                    ),
-                    hintText: "RePassword",
-                    suffixIcon: GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          showPassword = !showPassword;
-                        });
-                      },
-                      child: Icon(
-                          showPassword?Icons.visibility_off:Icons.visibility
+              RounderButtonWidget(
+                text: "LOGIN",
+                press:() => login(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Don't have an Account ? ",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignupPage()
+                        ),
+                      ).then(
+                            (value) {
+                          setState(() {});
+                        },
+                      );
+                    },
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
-                    border: InputBorder.none,
-                  ),
-                  onSubmitted: (value) {
-                    _password = value;
-                  },
-                  obscureText: !showPassword,
-                ),
-              ),
-
-              RounderButtonWidget(
-                text: "SIGNUP",
-                color: Colors.deepPurpleAccent[100],
-                textColor: Colors.black,
-                press: (){signup();},
-              ),
+                  )
+                ],
+              )
             ],
           ),
         ),
       ),
     );
   }
-  void signup(){
-    print("signup with email " + _email +" and pass " + _password);
-    // return true;
+  void login()  async {
+    await ApiHandler.login(emailController.text.trim(), passwordController.text.trim());
+    isLogin = await UserPrederences.isLogin()??false;
+    await ApiHandler.getUserInfo();
+    if(isLogin) {
+      setState(() {});
+    }else{
+      Utils.showSnackBar(context, "Login Error");
+    }
   }
 }

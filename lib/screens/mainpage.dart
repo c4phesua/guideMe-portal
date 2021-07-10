@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:guideme/controllers/user_preferences.dart';
 import 'package:guideme/screens/Searchpage.dart';
 import 'package:guideme/screens/homepage.dart';
+import 'package:guideme/screens/loginpage.dart';
 import 'package:guideme/screens/profilepage.dart';
 import 'package:guideme/screens/taskpage.dart';
 
@@ -15,8 +17,17 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> pageList = <Widget>[
     SearchPage(),
     Homepage(),
-    ProfilePage()
+    ProfilePage(),
   ];
+  bool isLogin;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    isLogin = UserPrederences.isLogin() ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +35,8 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: pageIndex,
-        onTap: (value) {
+        onTap: (value) async {
+          isLogin = await UserPrederences.isLogin() ?? false;
           setState(() {
             pageIndex = value;
           });
