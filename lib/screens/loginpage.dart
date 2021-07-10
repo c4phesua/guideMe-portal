@@ -5,7 +5,6 @@ import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/controllers/user_preferences.dart';
 import 'package:guideme/screens/profilepage.dart';
 import 'package:guideme/screens/signuppage.dart';
-import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
