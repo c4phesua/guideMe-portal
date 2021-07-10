@@ -76,4 +76,26 @@ class ApiHandler {
 
     }
   }
+
+  static Future<String> publicTodo(int id) async {
+    String token = await UserPrederences.getToken();
+    String tokenType = await UserPrederences.getTokenType();
+    final response = await http.post(
+      Uri.parse('https://guideme-service.herokuapp.com/api/todo/$id/public-todo-list'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': '$tokenType $token',
+      },
+    );
+
+    if(response.statusCode == 200){
+      Map<String, dynamic> json = jsonDecode(response.body);
+      return json["message"];
+    }else{
+      Map<String, dynamic> json = jsonDecode(response.body);
+      print(json['error']);
+      return json['error']??"Error";
+
+    }
+  }
 }

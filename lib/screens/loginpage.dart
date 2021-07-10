@@ -26,17 +26,23 @@ class _LoginPageState extends State<LoginPage> {
 
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
-  bool isLogin;
+  bool isLogin = false;
 
-  bool showPassword = false;
+  bool showPassword = UserPrederences.isLogin();
 
   @override
   void initState() {
     // TODO: implement initState
     _emailFocus = FocusNode();
     _passwordFocus = FocusNode();
-    isLogin = UserPrederences.isLogin()??false;
+    init();
     super.initState();
+  }
+  void init() async {
+    isLogin = UserPrederences.isLogin()?? false;
+    setState(() {
+      isLogin;
+    });
   }
   @override
   void dispose() {
@@ -195,7 +201,6 @@ class _LoginPageState extends State<LoginPage> {
   void login()  async {
     await ApiHandler.login(emailController.text.trim(), passwordController.text.trim());
     isLogin = await UserPrederences.isLogin()??false;
-    await ApiHandler.getUserInfo();
     if(isLogin) {
       setState(() {});
     }else{

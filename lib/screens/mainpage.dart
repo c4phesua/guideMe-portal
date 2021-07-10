@@ -36,7 +36,8 @@ class _MainScreenState extends State<MainScreen> {
         type: BottomNavigationBarType.fixed,
         currentIndex: pageIndex,
         onTap: (value) async {
-          isLogin = await UserPrederences.isLogin() ?? false;
+          isLogin = await UserPrederences.isLogin();
+          print("main "+isLogin.toString());
           setState(() {
             pageIndex = value;
           });
