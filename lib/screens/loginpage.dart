@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode _passwordFocus;
   bool isLogin = false;
 
-  bool showPassword = UserPrederences.isLogin();
+  bool showPassword = false;
 
   @override
   void initState() {

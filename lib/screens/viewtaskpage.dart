@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guideme/models/item.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/models/task.dart';
 import 'package:guideme/models/todo.dart';
@@ -7,9 +8,9 @@ import 'package:guideme/widgets/to_do.dart';
 import 'package:guideme/widgets/datetime_picker.dart';
 
 class ViewTaskpage extends StatefulWidget {
-  final Task task;
+  final Item item;
 
-  ViewTaskpage({@required this.task});
+  ViewTaskpage({@required this.item});
 
   @override
   _TaskpageState createState() => _TaskpageState();
@@ -19,26 +20,11 @@ class _TaskpageState extends State<ViewTaskpage> {
   DatabaseHelper _dbHelper = DatabaseHelper();
 
 
-  int _taskId = 0;
-  String _taskTitle = "";
-  String _taskDescription = "";
-  DateTime _dateExpired = DateTime.now().add(Duration(days: 15));
-
-
-  bool _contentVisile = false;
-
 
   @override
   void initState() {
-    if (widget.task != null) {
+    if (widget.item != null) {
       // Set visibility to true
-      _contentVisile = true;
-
-      _taskTitle = widget.task.title;
-      _taskDescription = widget.task.description;
-      _taskId = widget.task.id;
-      _dateExpired = widget.task.dateExpired==null?_dateExpired:DateTime.parse(widget.task.dateExpired);
-
     }
 
 
@@ -76,7 +62,7 @@ class _TaskpageState extends State<ViewTaskpage> {
                         ),
                         Expanded(
                           child: Text(
-                            _taskTitle ?? "(Unnamed Task)",
+                            widget.item.title ?? "(Unnamed Task)",
                             style: TextStyle(
                               fontSize: 26.0,
                               fontWeight: FontWeight.bold,
@@ -92,49 +78,14 @@ class _TaskpageState extends State<ViewTaskpage> {
                       horizontal: 24.0,
                     ),
                     child: Text(
-                      _taskDescription ?? "No Description Added",
+                      widget.item.description ?? "No Description Added",
                     ),
                   ),
-                  FutureBuilder(
-                      initialData: [],
-                      future: _dbHelper.getTodo(_taskId),
-                      builder: (context, snapshot) {
-                        return Expanded(
-                          child: ListView.builder(
-                            itemCount: snapshot.data.length,
+                  Expanded(
+                    child: ListView.builder(
+                            itemCount: widget.item.todos == null?0:widget.item.todos.length,
                             itemBuilder: (context, index) {
-                              return Dismissible(
-                                direction: DismissDirection.endToStart,
-                                key: Key(UniqueKey().toString()),
-                                background: Container(
-                                  alignment: AlignmentDirectional.centerEnd,
-                                  color: Colors.red,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-                                    child: Icon(Icons.delete,
-                                      color: Colors.white,
-
-                                    ),
-                                  ),
-                                ),
-                                onDismissed: (direction) async {
-                                  await _dbHelper.deleteTodo(snapshot.data[index].id);
-                                  setState(() {
-                                  });
-                                  Utils.showSnackBar(context, 'Deleted the todo');
-                                },
-                                // child: GestureDetector(
-                                // onTap: () async {
-                                //   if (snapshot.data[index].isDone == 0) {
-                                //     await _dbHelper.updateTodoDone(
-                                //         snapshot.data[index].id, 1);
-                                //   } else {
-                                //     await _dbHelper.updateTodoDone(
-                                //         snapshot.data[index].id, 0);
-                                //   }
-                                //   setState(() {});
-                                // },
-                                child: Container(
+                              return Container(
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 24.0,
                                     vertical: 8.0,
@@ -166,7 +117,7 @@ class _TaskpageState extends State<ViewTaskpage> {
                                       ),
                                       Flexible(
                                         child: Text(
-                                          snapshot.data[index].title ?? "(Unnamed Todo)",
+                                            widget.item.todos[index].title ?? "(Unnamed Todo)",
                                           style: TextStyle(
                                             // color: snapshot.data[index].isDone == 1 ? Color(0xFF211551) : Color(0xFF86829D),
                                             color: Color(0xFF86829D),
@@ -179,14 +130,10 @@ class _TaskpageState extends State<ViewTaskpage> {
 
                                     ],
                                   ),
-                                ),
-                                // )
-                              );
+                                );
                             },
                           ),
-                        );
-                      },
-                    ),
+                  ),
                 ],
               ),
               Positioned(
@@ -194,10 +141,32 @@ class _TaskpageState extends State<ViewTaskpage> {
                 right: 24.0,
                 child: GestureDetector(
                   onTap: () async {
-                    if (_taskId != 0) {
                       // download todo list save to database
-                      Navigator.pop(context);
+                    DatabaseHelper _dbHelper = DatabaseHelper();
+                    Task task = Task(
+                        title: widget.item.title,
+                        description: widget.item.description,
+                        createAt: DateTime.now().toString(),
+                        updateAt: DateTime.now().toString(),
+                        dateExpired: DateTime.now().add(Duration(days: 15)).toString()
+                    );
+                    await _dbHelper.insertTask(task);
+                    int lastId = 0;
+                    await _dbHelper.getLastTaskId().then((int value) => lastId = value);
+                    // print('id'+lastId.toString());
+                    List<Todo> todos = List();
+                    for(int i=0;i<widget.item.todos.length;i++){
+                      todos.add(Todo(
+                          title: widget.item.todos[i].title,
+                          isDone: 0,
+                          taskId: lastId,
+                          createAt:  DateTime.now().toString(),
+                          updateAt: DateTime.now().toString()
+                      ));
                     }
+                    await _dbHelper.insertTodos(todos);
+
+                    Navigator.pop(context);
                   },
                   child: Container(
                     width: 60.0,

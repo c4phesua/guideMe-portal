@@ -25,7 +25,7 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     if (dateTime == null) {
       return 'Select Date Expired';
     } else {
-      return 'Date Expired: ' + DateFormat('MM/dd/yyyy HH:mm').format(dateTime);
+      return 'Date Expired: ' + DateFormat('MM/dd/yyyy HH:mm:ss').format(dateTime);
     }
   }
 

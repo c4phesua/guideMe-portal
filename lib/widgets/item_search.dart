@@ -20,14 +20,6 @@ class ItemCardWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
-        secondaryActions: [
-          IconSlideAction(
-            color: Colors.lightBlue[100],
-            caption: 'Download',
-            onTap: () => downloadTodo(context,this.task),
-            icon: Icons.download,
-          )
-        ],
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(
@@ -36,6 +28,7 @@ class ItemCardWidget extends StatelessWidget {
           ),
           margin: EdgeInsets.only(
             bottom: 5.0,
+
             top: 5.0,
           ),
           decoration: BoxDecoration(
@@ -77,24 +70,6 @@ class ItemCardWidget extends StatelessWidget {
                       ),
                     )
                   ],
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'User: ' + "Unknow 1",
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          color: Color(0xFF211551),
-                          height: 1.5,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
-
-                  ),
                 ),
               ]
           ),
