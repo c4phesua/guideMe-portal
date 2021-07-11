@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/utils/utils.dart';
 import 'package:intl/intl.dart';
@@ -130,7 +131,25 @@ class TaskCardWidget extends StatelessWidget {
     Utils.showSnackBar(context, 'Deleted the task');
   }
 
-  void shareTodo(BuildContext context,int id ){
+  void shareTodo(BuildContext context,int id ) async{
      //
-}
+    String mess = '';
+    await ApiHandler.publicTodo(id).then((String value) => mess = value);
+
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Message'),
+          content: Text(mess),
+          actions: [
+            TextButton(
+                onPressed: (){
+                  Navigator.pop(context, 'Ok');
+                  myVoidCallback();
+                },
+                child: Text('Ok'))
+          ],
+        ),);
+    }
+
 }

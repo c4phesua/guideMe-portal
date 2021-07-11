@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/controllers/api_handler.dart';
+import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
 
@@ -11,21 +12,24 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
 
-  DatabaseHelper _dbHelper = DatabaseHelper();
+
   VoidCallback myVoidCallback() {
     setState(() {});
   }
 
-  String _email = "";
-  String _password = "";
-  String _name = "";
-  String _rePassword = "";
+  final emailController = TextEditingController();
+  final fullnameController = TextEditingController();
+  final passwordController = TextEditingController();
+  final rePasswordController = TextEditingController();
+  String avatar = "https://static.toiimg.com/photo/msid-67586673/67586673.jpg?3918697";
+
   FocusNode _emailFocus;
   FocusNode _passwordFocus;
   FocusNode _nameFocus;
   FocusNode _rePasswordFocus;
 
   bool showPassword = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -35,6 +39,7 @@ class _SignupPageState extends State<SignupPage> {
     _rePasswordFocus = FocusNode();
     super.initState();
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -42,14 +47,19 @@ class _SignupPageState extends State<SignupPage> {
     _passwordFocus.dispose();
     _rePasswordFocus.dispose();
     _nameFocus.dispose();
+    fullnameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    rePasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Size size = MediaQuery
+        .of(context)
+        .size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -76,8 +86,9 @@ class _SignupPageState extends State<SignupPage> {
 
                                   children: [
                                     Image(
-                                      image: AssetImage('assets/images/icon2.png'),
-                                      width: size.width*0.71,
+                                      image: AssetImage(
+                                          'assets/images/icon2.png'),
+                                      width: size.width * 0.71,
                                     )
                                   ],
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -96,7 +107,8 @@ class _SignupPageState extends State<SignupPage> {
                                                 Navigator.pop(context);
                                               },
                                               child: Padding(
-                                                padding: const EdgeInsets.all(10.0),
+                                                padding: const EdgeInsets.all(
+                                                    10.0),
                                                 child: Image(
                                                   image: AssetImage(
                                                       'assets/images/back_arrow_icon.png'),
@@ -132,6 +144,7 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _emailFocus,
+                  controller: emailController,
                   decoration: InputDecoration(
                       icon: Icon(
                           Icons.person,
@@ -141,8 +154,7 @@ class _SignupPageState extends State<SignupPage> {
                       border: InputBorder.none
                   ),
                   onSubmitted: (value) {
-                    _email = value;
-                    if(value != ""){
+                    if (value != "") {
                       _nameFocus.requestFocus();
                     }
                   },
@@ -151,6 +163,7 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _nameFocus,
+                  controller: fullnameController,
                   decoration: InputDecoration(
                       icon: Icon(
                           Icons.account_box,
@@ -160,8 +173,7 @@ class _SignupPageState extends State<SignupPage> {
                       border: InputBorder.none
                   ),
                   onSubmitted: (value) {
-                    _name = value;
-                    if(value != ""){
+                    if (value != "") {
                       _passwordFocus.requestFocus();
                     }
                   },
@@ -170,6 +182,7 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _passwordFocus,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     icon: Icon(
                         Icons.lock,
@@ -177,20 +190,21 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     hintText: "Password",
                     suffixIcon: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           showPassword = !showPassword;
                         });
                       },
                       child: Icon(
-                          showPassword?Icons.visibility_off:Icons.visibility
+                          showPassword ? Icons.visibility_off : Icons.visibility
                       ),
                     ),
                     border: InputBorder.none,
                   ),
                   onSubmitted: (value) {
-                    _password = value;
-                    _rePasswordFocus.requestFocus();
+                    if (value != "") {
+                      _rePasswordFocus.requestFocus();
+                    }
                   },
                   obscureText: !showPassword,
                 ),
@@ -198,6 +212,7 @@ class _SignupPageState extends State<SignupPage> {
               TextFieldContainerWidget(
                 child: TextField(
                   focusNode: _rePasswordFocus,
+                  controller: rePasswordController,
                   decoration: InputDecoration(
                     icon: Icon(
                         Icons.lock_outline,
@@ -205,20 +220,17 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     hintText: "RePassword",
                     suffixIcon: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           showPassword = !showPassword;
                         });
                       },
                       child: Icon(
-                          showPassword?Icons.visibility_off:Icons.visibility
+                          showPassword ? Icons.visibility_off : Icons.visibility
                       ),
                     ),
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (value) {
-                    _password = value;
-                  },
                   obscureText: !showPassword,
                 ),
               ),
@@ -227,7 +239,7 @@ class _SignupPageState extends State<SignupPage> {
                 text: "SIGNUP",
                 color: Colors.deepPurpleAccent[100],
                 textColor: Colors.black,
-                press: (){signup();},
+                press: () => signup(context),
               ),
             ],
           ),
@@ -235,8 +247,35 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
-  void signup(){
-    print("signup with email " + _email +" and pass " + _password);
+  void signup(BuildContext context) async {
+    String mess = "";
+    await ApiHandler.signup(
+        fullnameController.text.trim(),
+        emailController.text.trim(),
+        passwordController.text.trim(),
+        rePasswordController.text.trim(), avatar).then((String value) => mess = value);
     // return true;
+    if (mess == "Register successfully") {
+      Navigator.pop(context);
+    } else {
+      return showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Message'),
+            content: Text(mess),
+            actions: [
+              TextButton(
+                  onPressed: (){
+                    Navigator.pop(context, 'Ok');
+                    setState(() {
+
+                    });
+                  },
+                  child: Text('Ok'))
+            ],
+          ),);
+    }
   }
+
+
 }

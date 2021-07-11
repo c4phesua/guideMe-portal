@@ -30,7 +30,31 @@ class ApiHandler {
     }
   }
 
-  
+  static Future<String> signup(String name,String email, String password,String rePassword,String avatar) async {
+    final response = await http.post(
+      Uri.parse('https://guideme-service.herokuapp.com/api/auth/signup'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "fullname": name,
+        "email": email,
+        "password": password,
+        "rePassword": rePassword,
+        "avatar": avatar
+      }),
+    );
+
+    if(response.statusCode == 200){
+      Map<String, dynamic> json = jsonDecode(response.body);
+      return json["message"];
+    }else{
+      Map<String, dynamic> json = jsonDecode(response.body);
+      print(json['error']);
+      return json['error']??"Error";
+
+    }
+  }
 
   static Future<User> getUserInfo() async {
     String token = await UserPrederences.getToken();
@@ -49,6 +73,28 @@ class ApiHandler {
       return User.fromJson(json);
     }else if(response.statusCode == 500){
       print("get user info that bai");
+
+    }
+  }
+
+  static Future<String> publicTodo(int id) async {
+    String token = await UserPrederences.getToken();
+    String tokenType = await UserPrederences.getTokenType();
+    final response = await http.post(
+      Uri.parse('https://guideme-service.herokuapp.com/api/todo/$id/public-todo-list'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': '$tokenType $token',
+      },
+    );
+
+    if(response.statusCode == 200){
+      Map<String, dynamic> json = jsonDecode(response.body);
+      return json["message"];
+    }else{
+      Map<String, dynamic> json = jsonDecode(response.body);
+      print(json['error']);
+      return json['error']??"Error";
 
     }
   }
