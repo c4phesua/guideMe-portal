@@ -3,19 +3,17 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationHelper {
-  final timezone = tz.getLocation('Asia/Ho_Chi_Minh');
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   void scheduleNotification(int id, String deadLineDate, String name) {
 
     DateTime dateTime = DateTime.parse(deadLineDate);
 
-    tz.TZDateTime.from(dateTime, timezone);
-
     flutterLocalNotificationsPlugin.zonedSchedule(
         id,
-        "You have a deadline in ten minute",
-        name + " is time up in 10 minutes.",
+        name + " is time up in 10 minutes!!!",
+        "Wake your mind up and check it out, come on!",
         tz.TZDateTime.from(dateTime, tz.local)
             .subtract(const Duration(minutes: 10))
             .add(const Duration(seconds: 3)),
@@ -28,4 +26,9 @@ class NotificationHelper {
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
   }
+
+  void cancelNotification(int id) {
+     flutterLocalNotificationsPlugin.cancel(id);
+  }
+
 }
