@@ -12,6 +12,12 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
 
+  bool _validateEmail = false;
+  bool _validateFullname = false;
+  bool _validatePassword = false;
+  bool _validateRepass = false;
+
+  bool _validated () => _validateEmail && _validateFullname && _validatePassword && _validateRepass;
 
   VoidCallback myVoidCallback() {
     setState(() {});
@@ -239,7 +245,13 @@ class _SignupPageState extends State<SignupPage> {
                 text: "SIGNUP",
                 color: Colors.deepPurpleAccent[100],
                 textColor: Colors.black,
-                press: () => signup(context),
+                press: () => {
+                  (fullnameController.text == null || fullnameController.text == "") ? _validateFullname = false : _validateFullname = true,
+                  (emailController.text == null || emailController.text == "") ? _validateEmail = false : _validateEmail = true,
+                  (passwordController.text == null || passwordController.text == "") ? _validatePassword = false : _validatePassword = true,
+                  (rePasswordController.text == null || rePasswordController.text == "") ? _validateRepass = false : _validateRepass = true,
+                  _validated() ? signup(context) : Utils.showSnackBar(context, "Signup error"),
+                },
               ),
             ],
           ),
