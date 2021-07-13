@@ -35,6 +35,20 @@ class DatabaseHelper {
     );
   }
 
+   Future<void> cleanDatabase() async {
+    try{
+      Database db = await database();
+      await db.transaction((txn) async {
+       var batch = txn.batch();
+       await batch.delete('tasks');
+       await batch.delete('todo');
+       await batch.commit(noResult: true);
+      });
+    } catch(error){
+      throw Exception('clean database error: ' + error.toString());
+    }
+  }
+
   Future<int> insertTask(Task task) async {
     int taskId = 0;
     Database _db = await database();
@@ -89,6 +103,12 @@ class DatabaseHelper {
     Database _db = await database();
     List<Map> result = await _db.rawQuery('Select id from tasks order by id DESC limit 1');
     return result.length == 0?0:result[0]['id'];
+  }
+
+  Future<int> getPublicTaskId(int id) async {
+    Database _db = await database();
+    List<Map> result = await _db.rawQuery("Select idServer from tasks where id = '$id'");
+    return result.length == 0?0:result[0]['idServer'];
   }
 
 
@@ -212,6 +232,42 @@ class DatabaseHelper {
     Database _db = await database();
     String updateAt = DateTime.now().toString();
     await _db.rawUpdate("UPDATE todo SET status = 0 ,updateAt = '$updateAt' WHERE id = '$id'");
+  }
+
+  Future<void> syncDataAfterLogin(List<Item> data) async{
+    Database _db = await database();
+    data.forEach((e) async {
+      Task task = Task(
+          title: e.title,
+          description: e.description,
+          createAt: e.createAt,
+          updateAt: e.updateAt,
+          dateExpired: e.dateExpired,
+          status: e.status,
+          idServer: e.idServer,
+          id: e.id,
+          createBy: e.createBy,
+
+      );
+      await this.insertTask(task);
+      int lastId = 1;
+      await this.getLastTaskId().then((int value) => lastId = value??1);
+      List<Todo> todos = List();
+      for(int i=0;i<e.todos.length;i++){
+        todos.add(Todo(
+            id: e.todos[i].id,
+            idServer: e.todos[i].idServer,
+            status: e.todos[i].status,
+            taskIdServer: e.todos[i].taskIdServer,
+            title: e.todos[i].title,
+            isDone: e.todos[i].isDone,
+            taskId: e.todos[i].taskId,
+            createAt:  e.todos[i].createAt,
+            updateAt: e.todos[i].updateAt));
+      }
+      await this.insertTodos(todos);
+
+    });
   }
 
 }

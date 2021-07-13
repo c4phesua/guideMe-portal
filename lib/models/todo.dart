@@ -19,6 +19,8 @@ class Todo {
       'status':status == null?1:status,
       'idServer':idServer == null?-1:idServer,
       'taskIdServer':taskIdServer == null?-1:taskIdServer,
+      'createAt':createAt??DateTime.now().toString(),
+      'updateAt':updateAt
     };
   }
 

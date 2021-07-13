@@ -10,6 +10,7 @@ import 'package:guideme/models/todo.dart';
 import 'package:guideme/models/user.dart';
 import 'package:guideme/screens/loginpage.dart';
 import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/utils/utils.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -135,12 +136,39 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void logout() async {
-    await UserPrederences.setToken("");
-    await UserPrederences.setIsLogin(false);
-    isLogin = await UserPrederences.isLogin()??false;
-    setState(() {
-    });
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('Do you want logout without sync your data?'),
+        actions: [
+          TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'Yes');
+                await UserPrederences.setToken("");
+                await UserPrederences.setIsLogin(false);
+                isLogin = await UserPrederences.isLogin()??false;
+
+                setState(() {
+
+                });;
+              },
+              child: Text('Yes')),
+          TextButton(
+              onPressed: (){
+                Navigator.pop(context, 'No');
+                setState(() {
+
+                });;
+              },
+              child: Text('No'))
+        ],
+      ),);
+
+
   }
+
   void syncData() async {
     DatabaseHelper _db = DatabaseHelper();
     List<Task> tasks;
@@ -149,7 +177,16 @@ class _ProfilePageState extends State<ProfilePage> {
     for(int i=0;i<tasks.length;i++) {
       temp.add(await createItems(tasks[i]).then((Item value) => value));
     }
-    print(jsonEncode(temp));
+
+    await ApiHandler.syncData(temp??[]);
+
+    await _db.cleanDatabase();
+    List<Item> data;
+    await ApiHandler.syncData([]).then((List<Item> value) => data = value);
+    await _db.syncDataAfterLogin(data??[]);
+
+    Utils.showSnackBar(context, "Successful");
+
 
   }
 
