@@ -10,13 +10,13 @@ class NotificationHelper {
 
     DateTime dateTime = DateTime.parse(deadLineDate);
 
+    tz.TZDateTime triggeredTime= getTriggeredTime(dateTime);
+
     flutterLocalNotificationsPlugin.zonedSchedule(
         id,
         name + " is time up in 10 minutes!!!",
         "Wake your mind up and check it out, come on!",
-        tz.TZDateTime.from(dateTime, tz.local)
-            .subtract(const Duration(minutes: 10))
-            .add(const Duration(seconds: 3)),
+        triggeredTime,
         const NotificationDetails(
             android: AndroidNotificationDetails(
                 'CHANNEL_ID',
@@ -25,6 +25,19 @@ class NotificationHelper {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  tz.TZDateTime getTriggeredTime (DateTime dateTime) {
+    tz.TZDateTime result = tz.TZDateTime.from(dateTime, tz.local)
+        .subtract(const Duration(minutes: 10))
+        .add(const Duration(seconds: 3));
+
+    if (result.isBefore(tz.TZDateTime.now(tz.local))) {
+      result = tz.TZDateTime.from(dateTime, tz.local)
+          .add(const Duration(seconds: 30));
+    }
+
+    return result;
   }
 
   void cancelNotification(int id) {
