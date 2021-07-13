@@ -1,9 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/controllers/user_preferences.dart';
+import 'package:guideme/models/item.dart';
+import 'package:guideme/models/task.dart';
+import 'package:guideme/models/todo.dart';
 import 'package:guideme/models/user.dart';
 import 'package:guideme/screens/loginpage.dart';
+import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/utils/utils.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -92,7 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     backgroundColor: Colors.blueGrey,
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  onPressed: null,
+                  onPressed: () {
+                    syncData();
+                  },
                   child: const Text(
                     'Sync data',
                     style: TextStyle(
@@ -127,11 +136,65 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void logout() async {
-    await UserPrederences.setToken("");
-    await UserPrederences.setIsLogin(false);
-    isLogin = await UserPrederences.isLogin()??false;
-    setState(() {
-    });
+
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('Do you want logout without sync your data?'),
+        actions: [
+          TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'Yes');
+                await UserPrederences.setToken("");
+                await UserPrederences.setIsLogin(false);
+                isLogin = await UserPrederences.isLogin()??false;
+
+                setState(() {
+
+                });;
+              },
+              child: Text('Yes')),
+          TextButton(
+              onPressed: (){
+                Navigator.pop(context, 'No');
+                setState(() {
+
+                });;
+              },
+              child: Text('No'))
+        ],
+      ),);
+
+
+  }
+
+  void syncData() async {
+    DatabaseHelper _db = DatabaseHelper();
+    List<Task> tasks;
+    await _db.getAllTasks().then((List<Task> value) => tasks = value);
+    List<Item> temp = new List<Item>();
+    for(int i=0;i<tasks.length;i++) {
+      temp.add(await createItems(tasks[i]).then((Item value) => value));
+    }
+
+    await ApiHandler.syncData(temp??[]);
+
+    await _db.cleanDatabase();
+    List<Item> data;
+    await ApiHandler.syncData([]).then((List<Item> value) => data = value);
+    await _db.syncDataAfterLogin(data??[]);
+
+    Utils.showSnackBar(context, "Successful");
+
+
+  }
+
+  Future<Item> createItems(Task task) async {
+    DatabaseHelper _db = DatabaseHelper();
+    List<Todo> todos;
+    await _db.getAllTodo(task.id).then((List<Todo> value) => todos = value);
+    return Item.fromTask(task.toMap(), todos);
   }
 }
 
