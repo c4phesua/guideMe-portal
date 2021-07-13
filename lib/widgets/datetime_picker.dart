@@ -64,6 +64,7 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     });
     int id = this.taskId;
     await _dbHelper.updateTaskExpiredDate(id, dateTime);
+    await handleNotification(taskId, dateTime);
   }
 
   Future<void> handleNotification(int taskId, DateTime dateTime) async {
