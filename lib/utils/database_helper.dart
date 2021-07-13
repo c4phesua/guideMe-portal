@@ -12,7 +12,6 @@ class DatabaseHelper {
     return openDatabase(
       join(await getDatabasesPath(), 'todo.db'),
       onCreate: (db, version) async {
-        await db.execute("CREATE TABLE notification(id INTEGER PRIMARY KEY, taskId INTEGER");
         await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, "
             "title TEXT, description TEXT,dateExpired TEXT ,"
             "status INTEGER DEFAULT 1,idServer INTEGER,"
@@ -21,6 +20,8 @@ class DatabaseHelper {
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, "
             "title TEXT, isDone INTEGER, status INTEGER DEFAULT 1, idServer INTEGER, "
             "updateAt TEXT,createAt TEXT , taskIdServer INTEGER)");
+        await db.execute("CREATE TABLE notification(id INTEGER PRIMARY KEY, taskId INTEGER)");
+
         return db;
       },
       // onUpgrade: (db, oldVersion, version) async {
