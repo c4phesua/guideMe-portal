@@ -141,9 +141,12 @@ class DatabaseHelper {
     return (lst != null) ? lst.first : null;
   }
 
-  Future<void> insertNotification(Notification notification) async {
+  Future<int> insertNotification(LocalNotification notification) async {
+    int notificationId = 0;
     Database _db = await database();
-    await _db.insert('notification', notification.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    await _db.insert('notification', notification.toMap(), conflictAlgorithm: ConflictAlgorithm.replace)
+    .then((value) {notificationId = value;});
+    return notificationId;
   }
 
 }

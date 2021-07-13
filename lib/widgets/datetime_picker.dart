@@ -1,4 +1,6 @@
+import 'package:guideme/models/notification.dart';
 import 'package:guideme/utils/database_helper.dart';
+import 'package:guideme/utils/notification_helper.dart';
 import 'package:guideme/widgets/button_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -61,6 +63,18 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     });
     int id = this.taskId;
     await _dbHelper.updateTaskExpiredDate(id, dateTime);
+  }
+
+  Future<void> handleNotification(int taskId, DateTime dateTime) async {
+    NotificationHelper _notificationHelper = NotificationHelper();
+    DatabaseHelper _dbHelper = DatabaseHelper();
+
+    //get old if any, cancel old
+
+    //create new
+    LocalNotification _notification = LocalNotification(taskId: taskId);
+    int notiId = await _dbHelper.insertNotification(_notification);
+    //schedule
   }
 
   Future<DateTime> pickDate(BuildContext context) async {

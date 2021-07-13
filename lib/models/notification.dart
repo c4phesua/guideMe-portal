@@ -1,7 +1,7 @@
-class Notification {
+class LocalNotification {
   final int id;
   final int taskId;
-  Notification({this.id, this.taskId});
+  LocalNotification({this.id, this.taskId});
 
   Map<String, dynamic> toMap() {
     return {
