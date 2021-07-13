@@ -61,19 +61,19 @@ class DatabaseHelper {
   Future<void> updateTaskTitle(int id, String title) async {
     Database _db = await database();
     String updateAt = DateTime.now().toString();
-    await _db.rawUpdate("UPDATE tasks SET title = '$title' and updateAt = '$updateAt' WHERE id = '$id'");
+    await _db.rawUpdate("UPDATE tasks SET title = '$title' , updateAt = '$updateAt' WHERE id = '$id'");
   }
   Future<void> updateTaskExpiredDate(int id, DateTime date) async {
     Database _db = await database();
     String value = date.toString();
     String updateAt = DateTime.now().toString();
-    await _db.rawUpdate("UPDATE tasks SET dateExpired = '$value' and updateAt = '$updateAt' WHERE id = '$id'");
+    await _db.rawUpdate("UPDATE tasks SET dateExpired = '$value' ,updateAt = '$updateAt' WHERE id = '$id'");
   }
 
   Future<void> updateTaskDescription(int id, String description) async {
     Database _db = await database();
     String updateAt = DateTime.now().toString();
-    await _db.rawUpdate("UPDATE tasks SET description = '$description' and updateAt = '$updateAt' WHERE id = '$id'");
+    await _db.rawUpdate("UPDATE tasks SET description = '$description' , updateAt = '$updateAt' WHERE id = '$id'");
   }
 
   Future<void> updateIdTaskServer(int id, int idServer) async {
