@@ -1,3 +1,4 @@
+import 'package:guideme/models/notification.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,6 +13,7 @@ class DatabaseHelper {
       onCreate: (db, version) async {
         await db.execute("CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, description TEXT,dateExpired TEXT ,status INTEGER DEFAULT 1,idServer INTEGER)");
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, title TEXT, isDone INTEGER, status INTEGER DEFAULT 1,idServer INTEGER)");
+        await db.execute("CREATE TABLE notification(id INTEGER PRIMARY KEY, taskId INTEGER");
 
         return db;
       },
@@ -131,6 +133,17 @@ class DatabaseHelper {
   Future<void> deleteTodo(int id) async {
     Database _db = await database();
     await _db.rawUpdate("UPDATE todo SET status = 0 WHERE id = '$id'");
+  }
+
+  Future<int> getNotificationId(int taskId) async {
+    Database _db = await database();
+    List<int> lst = (await _db.rawQuery("SELECT MAX(id) FROM notification WHERE taskId = '$taskId'")).cast<int>();
+    return (lst != null) ? lst.first : null;
+  }
+
+  Future<void> insertNotification(Notification notification) async {
+    Database _db = await database();
+    await _db.insert('notification', notification.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
 }
