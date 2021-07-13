@@ -15,7 +15,6 @@ class User {
       'avatar': avatar,
     };
   }
-
   factory User.fromJson(Map<String, dynamic> json){
     return User(
 

@@ -143,6 +143,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
               TextFieldContainerWidget(
                 child: TextField(
+
                   focusNode: _emailFocus,
                   controller: emailController,
                   decoration: InputDecoration(
@@ -153,11 +154,6 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: "Your email",
                       border: InputBorder.none
                   ),
-                  onSubmitted: (value) {
-                    if (value != "") {
-                      _nameFocus.requestFocus();
-                    }
-                  },
                 ),
               ),
               TextFieldContainerWidget(
@@ -172,11 +168,6 @@ class _SignupPageState extends State<SignupPage> {
                       hintText: "Your fullname",
                       border: InputBorder.none
                   ),
-                  onSubmitted: (value) {
-                    if (value != "") {
-                      _passwordFocus.requestFocus();
-                    }
-                  },
                 ),
               ),
               TextFieldContainerWidget(
@@ -201,11 +192,6 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (value) {
-                    if (value != "") {
-                      _rePasswordFocus.requestFocus();
-                    }
-                  },
                   obscureText: !showPassword,
                 ),
               ),
@@ -249,31 +235,41 @@ class _SignupPageState extends State<SignupPage> {
   }
   void signup(BuildContext context) async {
     String mess = "";
-    await ApiHandler.signup(
-        fullnameController.text.trim(),
-        emailController.text.trim(),
-        passwordController.text.trim(),
-        rePasswordController.text.trim(), avatar).then((String value) => mess = value);
-    // return true;
-    if (mess == "Register successfully") {
-      Navigator.pop(context);
-    } else {
-      return showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Message'),
-            content: Text(mess),
-            actions: [
-              TextButton(
-                  onPressed: (){
-                    Navigator.pop(context, 'Ok');
-                    setState(() {
+    bool valid = true;
+    String email = emailController.text.trim();
+    String name = fullnameController.text.trim();
+    String password = passwordController.text.trim();
+    String rePass = rePasswordController.text.trim();
+    if(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)){
+      valid = false;
+      mess="Email error";
+    }
+    if(name.isEmpty && valid){
+      valid = false;
+      mess="Name error";
+    }
+    if(password.isEmpty&&valid){
+      valid = false;
+      mess="password error";
+    }
+    if(password != rePass&&valid){
+      valid = false;
+      mess="password doesn't match";
+    }
+    if(valid) {
+      await ApiHandler.signup(
+          fullnameController.text.trim(),
+          emailController.text.trim(),
+          passwordController.text.trim(),
+          rePasswordController.text.trim(), avatar).then((String value) =>
+      mess = value);
+      // return true;
+    }
 
-                    });
-                  },
-                  child: Text('Ok'))
-            ],
-          ),);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mess)));
+    if (mess == "Register successfully") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mess)));
+      Navigator.pop(context);
     }
   }
 

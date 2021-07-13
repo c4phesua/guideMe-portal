@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/models/task.dart';
 import 'package:guideme/screens/viewtaskpage.dart';
 import 'package:guideme/utils/database_helper.dart';
@@ -105,39 +106,46 @@ class _SearchPageState extends State<SearchPage> {
                       Expanded(
                         child: FutureBuilder(
                           initialData: [],
-                          future: _dbHelper.getTasksWithKey(this.keySearch),
+                          future: ApiHandler.searchPublicTodo(this.keySearch),
                           builder: (context, snapshot) {
-                            return ScrollConfiguration(
-                              behavior: NoGlowBehaviour(),
-                              child: ListView.builder(
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ViewTaskpage(
-                                            task: snapshot.data[index],
+                            if(snapshot.connectionState == ConnectionState.done) {
+                              return ScrollConfiguration(
+                                behavior: NoGlowBehaviour(),
+                                child: ListView.builder(
+                                  itemCount: snapshot.data==null?0:snapshot.data.length,
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ViewTaskpage(
+                                              item: snapshot.data[index],
+                                            ),
                                           ),
-                                        ),
-                                      ).then(
-                                            (value) {
-                                          setState(() {});
-                                        },
-                                      );
-                                    },
-                                    child: ItemCardWidget(
-                                        task:Task(id:snapshot.data[index].id,
-                                            title:snapshot.data[index].title,
-                                            description:snapshot.data[index].description,
-                                            dateExpired:snapshot.data[index].dateExpired),
-                                        myVoidCallback: myVoidCallback),
-                                  );
-                                },
-                              ),
-                            );
-                          },
+                                        ).then(
+                                              (value) {
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                      child: ItemCardWidget(
+                                          task: Task(
+                                              id: snapshot.data[index].id,
+                                              title: snapshot.data[index].title,
+                                              description: snapshot
+                                                  .data[index].description,
+                                              dateExpired: snapshot
+                                                  .data[index].dateExpired),
+                                          myVoidCallback: myVoidCallback),
+                                    );
+                                  },
+                                ),
+                              );
+                          }else{
+                              return Text('waiting...');
+                            }
+                        },
                         ),
                       )
                     ],

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:guideme/controllers/api_handler.dart';
 import 'package:guideme/controllers/user_preferences.dart';
+import 'package:guideme/models/item.dart';
 import 'package:guideme/screens/profilepage.dart';
 import 'package:guideme/screens/signuppage.dart';
+import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/utils/utils.dart';
 import 'package:guideme/widgets/rounder_button.dart';
 import 'package:guideme/widgets/textfield_container.dart';
@@ -28,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode _passwordFocus;
   bool isLogin = false;
 
-  bool showPassword = UserPrederences.isLogin();
+  bool showPassword = false;
 
   @override
   void initState() {
@@ -202,7 +204,36 @@ class _LoginPageState extends State<LoginPage> {
     await ApiHandler.login(emailController.text.trim(), passwordController.text.trim());
     isLogin = await UserPrederences.isLogin()??false;
     if(isLogin) {
-      setState(() {});
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Message'),
+          content: Text('Do you want to sync your data?'),
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  Navigator.pop(context, 'Yes');
+                  DatabaseHelper _db = DatabaseHelper();
+                  await _db.cleanDatabase();
+                  List<Item> data;
+                  await ApiHandler.syncData([]).then((List<Item> value) => data = value);
+                  await _db.syncDataAfterLogin(data??[]);
+
+                  setState(() {
+                  });
+                },
+                child: Text('Yes')),
+            TextButton(
+                onPressed: (){
+                  Navigator.pop(context, 'No');
+                  setState(() {
+
+                  });;
+                },
+                child: Text('No'))
+          ],
+        ),);
+
     }else{
       Utils.showSnackBar(context, "Login Error");
     }

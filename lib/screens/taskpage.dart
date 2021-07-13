@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:guideme/utils/database_helper.dart';
 import 'package:guideme/models/task.dart';
 import 'package:guideme/models/todo.dart';
 import 'package:guideme/utils/utils.dart';
-import 'package:guideme/widgets/to_do.dart';
 import 'package:guideme/widgets/datetime_picker.dart';
 
 class Taskpage extends StatefulWidget {
@@ -97,7 +98,9 @@ class _TaskpageState extends State<Taskpage> {
                               if (value != "") {
                                 // Check if the task is null
                                 if (widget.task == null) {
-                                  Task _newTask = Task(title: value, dateExpired: _dateExpired.toString());
+                                  Task _newTask = Task(title: value, dateExpired: _dateExpired.toString(),
+                                      createAt:  DateTime.now().toString(),
+                                  updateAt: DateTime.now().toString());
                                   _taskId =
                                       await _dbHelper.insertTask(_newTask);
                                   setState(() {
@@ -217,13 +220,17 @@ class _TaskpageState extends State<Taskpage> {
                                         GestureDetector(
                                             onTap: () async {
                                               if (snapshot.data[index].isDone == 0) {
+                                                print("not done" + jsonEncode(snapshot.data[index].toMap()));
                                                 await _dbHelper.updateTodoDone(
                                                     snapshot.data[index].id, 1);
                                               } else {
+                                                print("done "+jsonEncode(snapshot.data[index].toMap()));
                                                 await _dbHelper.updateTodoDone(
                                                     snapshot.data[index].id, 0);
                                               }
-                                              setState(() {});
+                                              setState(() {
+
+                                              });
                                             },
                                             child: Container(
                                               width: 30.0,
@@ -320,6 +327,8 @@ class _TaskpageState extends State<Taskpage> {
                                       title: value,
                                       isDone: 0,
                                       taskId: _taskId,
+                                        createAt:  DateTime.now().toString(),
+                                        updateAt: DateTime.now().toString()
                                     );
                                     await _dbHelper.insertTodo(_newTodo);
                                     setState(() {});
