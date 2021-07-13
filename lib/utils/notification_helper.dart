@@ -33,7 +33,7 @@ class NotificationHelper {
         .add(const Duration(seconds: 3));
 
     if (result.isBefore(tz.TZDateTime.now(tz.local))) {
-      result = tz.TZDateTime.from(dateTime, tz.local)
+      result = tz.TZDateTime.now(tz.local)
           .add(const Duration(seconds: 30));
     }
 
