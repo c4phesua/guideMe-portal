@@ -148,6 +148,12 @@ class DatabaseHelper {
     });
   }
 
+  Future<Task> getTaskById(int id) async {
+    Database _db = await database();
+    Task task = (await _db.rawQuery("'Select * FROM tasks where id = '$id'")) as Task;
+    return task;
+  }
+
   Future<List<Task>> getTasksWithKey(String key) async {
     Database _db = await database();
     List<Map> taskMap = await _db.rawQuery('Select * from tasks where title like ? and status = 1',["%"+key+"%"]);
