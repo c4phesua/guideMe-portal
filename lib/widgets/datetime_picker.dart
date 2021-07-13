@@ -72,10 +72,11 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     DatabaseHelper _dbHelper = DatabaseHelper();
 
     //get old if any, cancel old
+    int oldNotiId = 0;
 
-    int oldNotiId = await _dbHelper.getNotificationId(taskId);
+    await _dbHelper.getNotificationId(taskId).then((value) => oldNotiId = value);
 
-    if (oldNotiId != null) {
+    if (oldNotiId != 0) {
       _notificationHelper.cancelNotification(oldNotiId);
     }
 
@@ -84,7 +85,7 @@ class _DatetimePickerWidgetState extends State<DatetimePickerWidget> {
     int notiId = await _dbHelper.insertNotification(_notification);
     //schedule
     Task task = await _dbHelper.getTaskById(taskId);
-    _notificationHelper.scheduleNotification(notiId, task.dateExpired, task.title);
+    _notificationHelper.scheduleNotification(notiId, dateTime.toString(), task.title);
   }
 
   Future<DateTime> pickDate(BuildContext context) async {

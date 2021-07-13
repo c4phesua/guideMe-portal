@@ -151,8 +151,21 @@ class DatabaseHelper {
 
   Future<Task> getTaskById(int id) async {
     Database _db = await database();
-    Task task = (await _db.rawQuery("'Select * FROM tasks where id = '$id'")) as Task;
-    return task;
+    List<Map> taskMap = await _db.rawQuery("Select * FROM tasks where id = '$id'");
+    List<Task> tasks = List.generate(taskMap.length, (index) {
+      return Task(
+        id: taskMap[index]['id'],
+        title: taskMap[index]['title'],
+        description: taskMap[index]['description'],
+        dateExpired: taskMap[index]['dateExpired'],
+        status: taskMap[index]['status'],
+        idServer: taskMap[index]['idServer'],
+        updateAt: taskMap[index]['updateAt'],
+        createAt: taskMap[index]['createAt'],
+        createBy: taskMap[index]['createBy'],
+      );
+    });
+    return tasks.first;
   }
 
   Future<List<Task>> getTasksWithKey(String key) async {
@@ -277,8 +290,8 @@ class DatabaseHelper {
 
   Future<int> getNotificationId(int taskId) async {
     Database _db = await database();
-    List<int> lst = (await _db.rawQuery("SELECT MAX(id) FROM notification WHERE taskId = '$taskId'")).cast<int>();
-    return (lst != null) ? lst.first : null;
+    List<Map> result = await _db.rawQuery("Select id from notification where taskId = '$taskId' order by id DESC limit 1");
+    return result.length == 0?0:result[0]['id'];
   }
 
   Future<int> insertNotification(LocalNotification notification) async {
