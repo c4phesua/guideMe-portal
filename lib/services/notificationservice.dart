@@ -41,5 +41,6 @@ class NotificationService {
 
   Future selectNotification(String payload) async {
     //Handle notification tapped logic here
+    print("clicked");
   }
 }

@@ -1,7 +1,5 @@
-import 'dart:convert';
-
+import 'package:guideme/models/notification.dart';
 import 'package:guideme/models/item.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -22,6 +20,7 @@ class DatabaseHelper {
         await db.execute("CREATE TABLE todo(id INTEGER PRIMARY KEY, taskId INTEGER, "
             "title TEXT, isDone INTEGER, status INTEGER DEFAULT 1, idServer INTEGER, "
             "updateAt TEXT,createAt TEXT , taskIdServer INTEGER)");
+        await db.execute("CREATE TABLE notification(id INTEGER PRIMARY KEY, taskId INTEGER)");
 
         return db;
       },
@@ -150,6 +149,25 @@ class DatabaseHelper {
     });
   }
 
+  Future<Task> getTaskById(int id) async {
+    Database _db = await database();
+    List<Map> taskMap = await _db.rawQuery("Select * FROM tasks where id = '$id'");
+    List<Task> tasks = List.generate(taskMap.length, (index) {
+      return Task(
+        id: taskMap[index]['id'],
+        title: taskMap[index]['title'],
+        description: taskMap[index]['description'],
+        dateExpired: taskMap[index]['dateExpired'],
+        status: taskMap[index]['status'],
+        idServer: taskMap[index]['idServer'],
+        updateAt: taskMap[index]['updateAt'],
+        createAt: taskMap[index]['createAt'],
+        createBy: taskMap[index]['createBy'],
+      );
+    });
+    return tasks.first;
+  }
+
   Future<List<Task>> getTasksWithKey(String key) async {
     Database _db = await database();
     List<Map> taskMap = await _db.rawQuery('Select * from tasks where title like ? and status = 1',["%"+key+"%"]);
@@ -268,6 +286,20 @@ class DatabaseHelper {
       await this.insertTodos(todos);
 
     });
+  }
+
+  Future<int> getNotificationId(int taskId) async {
+    Database _db = await database();
+    List<Map> result = await _db.rawQuery("Select id from notification where taskId = '$taskId' order by id DESC limit 1");
+    return result.length == 0?0:result[0]['id'];
+  }
+
+  Future<int> insertNotification(LocalNotification notification) async {
+    int notificationId = 0;
+    Database _db = await database();
+    await _db.insert('notification', notification.toMap(), conflictAlgorithm: ConflictAlgorithm.replace)
+    .then((value) {notificationId = value;});
+    return notificationId;
   }
 
 }
