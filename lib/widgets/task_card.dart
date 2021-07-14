@@ -124,11 +124,32 @@ class TaskCardWidget extends StatelessWidget {
 
 
 
-   void deleteTodo(BuildContext context,int id) {
-    this._dbHelper.deleteTask(id);
-    this.myVoidCallback();
+   void deleteTodo(BuildContext context,int id) async {
+    // this._dbHelper.deleteTask(id);
+    // this.myVoidCallback();
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Message'),
+        content: Text('Do you want to delete?'),
+        actions: [
+          TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'Yes');
+                await _dbHelper.deleteTask(taskId);
+                this.myVoidCallback();
+              },
+              child: Text('Yes')),
+          TextButton(
+              onPressed: (){
+                Navigator.pop(context, 'No');
+                this.myVoidCallback();
+              },
+              child: Text('No'))
+        ],
+      ),);
 
-    Utils.showSnackBar(context, 'Deleted the task');
+
   }
 
   void shareTodo(BuildContext context,int id ) async{

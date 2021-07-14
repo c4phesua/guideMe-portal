@@ -170,6 +170,46 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void syncData() async {
+    // return showDialog(
+    //   context: context,
+    //   builder: (context) => AlertDialog(
+    //     title: Text('Message'),
+    //     content: Text('Do you want to sync?'),
+    //     actions: [
+    //       TextButton(
+    //           onPressed: () async {
+    //             Navigator.pop(context, 'Yes');
+    //             DatabaseHelper _db = DatabaseHelper();
+    //             List<Task> tasks;
+    //             await _db.getAllTasks().then((List<Task> value) => tasks = value);
+    //             List<Item> temp = new List<Item>();
+    //             for(int i=0;i<tasks.length;i++) {
+    //               temp.add(await createItems(tasks[i]).then((Item value) => value));
+    //             }
+    //             // print(jsonEncode(temp));
+    //             await ApiHandler.syncData(temp??[]);
+    //
+    //             await _db.cleanDatabase();
+    //             List<Item> data;
+    //             await ApiHandler.syncData([]).then((List<Item> value) => data = value);
+    //             await _db.syncDataAfterLogin(data??[]);
+    //
+    //             Utils.showSnackBar(context, "Successful");
+    //             setState(() {
+    //
+    //             });
+    //           },
+    //           child: Text('Yes')),
+    //       TextButton(
+    //           onPressed: (){
+    //             Navigator.pop(context, 'No');
+    //             setState(() {
+    //
+    //             });
+    //           },
+    //           child: Text('No'))
+    //     ],
+    //   ),);
     DatabaseHelper _db = DatabaseHelper();
     List<Task> tasks;
     await _db.getAllTasks().then((List<Task> value) => tasks = value);
@@ -177,7 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
     for(int i=0;i<tasks.length;i++) {
       temp.add(await createItems(tasks[i]).then((Item value) => value));
     }
-
+    // print(jsonEncode(temp));
     await ApiHandler.syncData(temp??[]);
 
     await _db.cleanDatabase();
